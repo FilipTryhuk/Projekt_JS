@@ -100,7 +100,7 @@ class RegulyGry():
         """Sprawdź i prześlij do oceny odp. użytkownika, analogicznie do nextAttempt() ale przyjmująca odpowiedź jako arg."""
         correct = 0
         if (len(inp) != 4) or ([True for x in inp if x not in "123456"]):    
-            return "Niepoprawny format."
+            return "Niepoprawny format.", 0, 0
         else:
             self.attempts_left -= 1
             correct, places = self.evaluateAnswer(inp)
@@ -109,9 +109,9 @@ class RegulyGry():
     def checkCond(self, correct, places):
         """Metoda sprawdzająca warunki końcowe programu, analogiczna do jednokrotnego wywołania pętli z funkcji mainLoop"""
         if correct == 4:
-            return self.victoryPopUp()
+            return self.victoryPopUp(), 4, 0
         elif self.attempts_left < 1 and correct != 4:
-            return self.lossPopUp()
+            return self.lossPopUp(), -1, -1
         else:
             atts = str(self.attempts_left)
             atts = "Pozostało prób: " + atts
