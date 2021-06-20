@@ -5,7 +5,6 @@ class MyError(Exception):
     pass
 
 class UnknownError(MyError):
-    print("I just don't know what went wrong.")
     pass
 
 class IncorrectData(MyError):
@@ -26,6 +25,13 @@ class RegulyGry():
         ret = "Rozwiązaniem było: " + ret
         return ret
     
+    def changeSol(self):
+        """Ustaw rozwiązanie na wybrane, przydatne przy testowaniu"""
+        self._n1 = 1
+        self._n2 = 2
+        self._n3 = 3
+        self._n4 = 4
+        
     def nextAttempt(self):
         """Pobierz kolejną odpowiedź od użytkownika, prześlij ją do oceny"""
         print("Pozostało prób:", self.attempts_left)
@@ -173,52 +179,51 @@ class OszukaneReguly(RegulyGry):
             places = true_places + 1
         return hits, places
 
-cheat = random.choice([0, 1])
-if cheat == 0:
-    reguly = RegulyGry()
-else:
-    reguly = OszukaneReguly()
-reguly.peek()
+if __name__ == '__main__':
+    cheat = random.choice([0, 1])
+    if cheat == 0:
+        reguly = RegulyGry()
+    else:
+        reguly = OszukaneReguly()
 
-
-def reset():
-    reguly.reset()
+    def reset():
+        reguly.reset()
     
-def peek():
-    reguly.attempts_left = 0
-    label.config(text = (reguly.peek()))
+    def peek():
+        reguly.attempts_left = 0
+        label.config(text = (reguly.peek()))
     
-def getInput():
-    user_input = text_box.get("1.0","end-1c")
-    atts, correct, places = reguly.sendInput(user_input)
-    label.config(text = atts)
-    hints_1.config(text = correct)
-    hints_2.config(text = places)
+    def getInput():
+        user_input = text_box.get("1.0","end-1c")
+        atts, correct, places = reguly.sendInput(user_input)
+        label.config(text = atts)
+        hints_1.config(text = correct)
+        hints_2.config(text = places)
 
-def oszust():
-    ann, mode = reguly.oszust()
-    label.config(text = ann)
+    def oszust():
+        ann, mode = reguly.oszust()
+        label.config(text = ann)
         
     
-root = Tk()
-root.title('App')
-root.geometry("600x400")
-label = Label(root, text="Mastermind", font=30, fg="blue")
-label.pack()
-reset_button = Button(root, text="RESET", width=8, command=reset)
-reset_button.pack()
-text_box = Text(root, height=1, width=12)
-text_box.pack()
-label = Label(root, text = "Pozostało prób: 12")
-label.pack()
-send_button = Button(root, text="Confirm guess", width=14, command = lambda:getInput())
-send_button.pack()
-peek_button = Button(root, text="Give up and reveal the code", width=20, command=peek)
-peek_button.pack()
-hints_1 = Label(root, text="Pełne trafienia: 0")
-hints_1.pack()
-hints_2 = Label(root, text="Poprawne liczby na złych miejscach: 0")
-hints_2.pack()
-oszust_button = Button(root, text="Oszust!", width=8, command=oszust)
-oszust_button.pack()
-root.mainloop()
+    root = Tk()
+    root.title('App')
+    root.geometry("600x400")
+    label = Label(root, text="Mastermind", font=30, fg="blue")
+    label.pack()
+    reset_button = Button(root, text="RESET", width=8, command=reset)
+    reset_button.pack()
+    text_box = Text(root, height=1, width=12)
+    text_box.pack()
+    label = Label(root, text = "Pozostało prób: 12")
+    label.pack()
+    send_button = Button(root, text="Confirm guess", width=14, command = lambda:getInput())
+    send_button.pack()
+    peek_button = Button(root, text="Give up and reveal the code", width=20, command=peek)
+    peek_button.pack()
+    hints_1 = Label(root, text="Pełne trafienia: 0")
+    hints_1.pack()
+    hints_2 = Label(root, text="Poprawne liczby na złych miejscach: 0")
+    hints_2.pack()
+    oszust_button = Button(root, text="Oszust!", width=8, command=oszust)
+    oszust_button.pack()
+    root.mainloop()
