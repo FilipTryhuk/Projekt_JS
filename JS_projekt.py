@@ -1,25 +1,23 @@
 import random
 from tkinter import *
 
-#class MyError(Exception):
-#    pass
-#
-#class UnknownError(MyError):
-#    print("I just don't know what went wrong.")
-#    pass
-#
-#class IncorrectData(MyError):
-#    pass
+class MyError(Exception):
+    pass
+
+class UnknownError(MyError):
+    print("I just don't know what went wrong.")
+    pass
+
+class IncorrectData(MyError):
+    pass
 
 class RegulyGry():
     def __init__(self):
-        self.cheat = 0
         self._n1 = random.randint(1, 6)
         self._n2 = random.randint(1, 6)
         self._n3 = random.randint(1, 6)
         self._n4 = random.randint(1, 6)
         self.num = [self._n1, self._n2, self._n3, self._n4]
-        #self.number = 1000*self.n1 + 100*self.n2 + 10*self.n3 + self.n4
         self.attempts_left = 12
     
     def peek(self):
@@ -69,13 +67,12 @@ class RegulyGry():
         return hits, places
     
     def reset(self):
-        self.cheat = 0
+        """Wylosuj kolejny kod, przywróc 12 prób użytkownikowi"""
         self._n1 = random.randint(1, 6)
         self._n2 = random.randint(1, 6)
         self._n3 = random.randint(1, 6)
         self._n4 = random.randint(1, 6)
         self.num = [self._n1, self._n2, self._n3, self._n4]
-        #self.number = 1000*self.n1 + 100*self.n2 + 10*self.n3 + self.n4
         self.attempts_left = 12
     
     def victoryPopUp(self):
@@ -121,10 +118,21 @@ class RegulyGry():
             places = "Poprawne liczby na złych miejscach: " + places
             return atts, correct, places
         
+    def oszust(self):
+        """Wyświetl komunikat oraz poprawny kod"""
+        ann = str(self.num)
+        ann = "Tere fere. Rozwiązaniem było: " + ann
+        return ann, 0
+        
 class OszukaneReguly(RegulyGry):
     def peek(self):
         """Pokaż informację o oszustwie"""
         return "Oszukiwałem!"
+    
+    def oszust(self):
+        """Powiadow użytkownika o wygranej"""
+        ann = "Złapałeś/łaś mnie!"
+        return ann, 1
     
     def evaluateAnswer(self, guess):
         """Porównaj podaną odpowiedź, zwróc niepoprawne trafienia pełne i częściowe"""
@@ -186,6 +194,11 @@ def getInput():
     label.config(text = atts)
     hints_1.config(text = correct)
     hints_2.config(text = places)
+
+def oszust():
+    ann, mode = reguly.oszust()
+    label.config(text = ann)
+        
     
 root = Tk()
 root.title('App')
@@ -194,7 +207,7 @@ label = Label(root, text="Mastermind", font=30, fg="blue")
 label.pack()
 reset_button = Button(root, text="RESET", width=8, command=reset)
 reset_button.pack()
-text_box = Text(root, height=1, width=6)
+text_box = Text(root, height=1, width=12)
 text_box.pack()
 label = Label(root, text = "Pozostało prób: 12")
 label.pack()
@@ -206,5 +219,6 @@ hints_1 = Label(root, text="Pełne trafienia: 0")
 hints_1.pack()
 hints_2 = Label(root, text="Poprawne liczby na złych miejscach: 0")
 hints_2.pack()
-
+oszust_button = Button(root, text="Oszust!", width=8, command=oszust)
+oszust_button.pack()
 root.mainloop()
