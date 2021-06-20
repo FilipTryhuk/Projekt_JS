@@ -19,12 +19,6 @@ class RegulyGry():
         self.num = [self._n1, self._n2, self._n3, self._n4]
         self.attempts_left = 12
     
-    def peek(self):
-        """Podejrzyj wygenerowane rozwiązanie"""
-        ret = str(self.num)
-        ret = "Rozwiązaniem było: " + ret
-        return ret
-    
     def changeSol(self):
         """Ustaw rozwiązanie na wybrane, przydatne przy testowaniu"""
         self._n1 = 1
@@ -32,46 +26,7 @@ class RegulyGry():
         self._n3 = 3
         self._n4 = 4
         self.num = [self._n1, self._n2, self._n3, self._n4]
-        
-    def nextAttempt(self):
-        """Pobierz kolejną odpowiedź od użytkownika, prześlij ją do oceny"""
-        print("Pozostało prób:", self.attempts_left)
-        inp = input("Podaj cztery cyfry (bez odstępów): ")
-        correct = 0
-        if inp == "RESET":
-            self.reset()
-        elif (len(inp) != 4) or ([True for x in inp if x not in "123456"]):    
-            print("Niepoprawny format.")
-        else:
-            self.attempts_left -= 1
-            correct = self.evaluateAnswer(inp)
-        return correct
-        
-    def evaluateAnswer(self, guess):
-        """Porównaj podaną odpowiedź, zwróc trafienia pełne i częściowe"""
-        hits = 0
-        places = 0
-        g1, g2, g3, g4 = [int(x) for x in guess]
-        g_num = [g1, g2, g3, g4]
-        #num_freq - tablica przechowujaca informacje o ilosci kazdej z cyfr 1-6 w nietrafionym kodzie
-        #g_freq - tablica przechowujaca informacje o ilosci kazdej z cyfr 1-6 w nietrafionej odpowiedzi uzytkownika
-        num_freq = [0,0,0,0,0,0]
-        g_freq = [0,0,0,0,0,0]
-        for x in range(len(g_num)):
-            if g_num[x] == self.num[x]:
-                hits += 1
-            else:
-                cur_num = self.num[x]
-                num_freq[cur_num - 1] += 1
-                cur_num = g_num[x]
-                g_freq[cur_num - 1] += 1
-        for x in range(len(num_freq)):
-            while num_freq[x] > 0:
-                if g_freq[x] > 0:
-                    places += 1
-                    g_freq[x] -= 1
-                num_freq[x] -= 1
-        return hits, places
+
     
     def reset(self):
         """Wylosuj kolejny kod, przywróc 12 prób użytkownikowi"""
@@ -89,16 +44,7 @@ class RegulyGry():
     def lossPopUp(self):
         """Zgłoś przegraną przez użytkownika"""
         return "Przegrana"
-        
-    def mainLoop(self):
-        """Pętla zajmująca się działaniem programu"""
-        while self.attempts_left > 0:
-            correct = self.nextAttempt()
-            if correct == 4:
-                print(self.victoryPopUp())
-                break
-        if correct != 4:
-            print(self.lossPopUp())
+
         
     def sendInput(self, inp):
         """Sprawdź i prześlij do oceny odp. użytkownika, analogicznie do nextAttempt() ale przyjmująca odpowiedź jako arg."""
@@ -125,12 +71,69 @@ class RegulyGry():
             places = "Poprawne liczby na złych miejscach: " + places
             return atts, correct, places
         
+    #def mainLoop(self):
+    #    """Pętla zajmująca się działaniem programu"""
+    #    while self.attempts_left > 0:
+    #        correct = self.nextAttempt()
+    #        if correct == 4:
+    #            print(self.victoryPopUp())
+    #            break
+    #    if correct != 4:
+    #        print(self.lossPopUp())
+        
+    #def nextAttempt(self):
+    #    """Pobierz kolejną odpowiedź od użytkownika, prześlij ją do oceny"""
+    #    print("Pozostało prób:", self.attempts_left)
+    #    inp = input("Podaj cztery cyfry (bez odstępów): ")
+    #    correct = 0
+    #    if inp == "RESET":
+    #        self.reset()
+    #    elif (len(inp) != 4) or ([True for x in inp if x not in "123456"]):    
+    #        print("Niepoprawny format.")
+    #    else:
+    #        self.attempts_left -= 1
+    #        correct = self.evaluateAnswer(inp)
+    #    return correct
+    
+class LogikaGry(RegulyGry):
+    def peek(self):
+        """Podejrzyj wygenerowane rozwiązanie"""
+        ret = str(self.num)
+        ret = "Rozwiązaniem było: " + ret
+        return ret
+        
     def oszust(self):
         """Wyświetl komunikat oraz poprawny kod"""
         ann = str(self.num)
         ann = "Tere fere. Rozwiązaniem było: " + ann
         return ann, 0
-        
+    
+    def evaluateAnswer(self, guess):
+        """Porównaj podaną odpowiedź, zwróc trafienia pełne i częściowe"""
+        hits = 0
+        places = 0
+        g1, g2, g3, g4 = [int(x) for x in guess]
+        g_num = [g1, g2, g3, g4]
+        #num_freq - tablica przechowujaca informacje o ilosci kazdej z cyfr 1-6 w nietrafionym kodzie
+        #g_freq - tablica przechowujaca informacje o ilosci kazdej z cyfr 1-6 w nietrafionej odpowiedzi uzytkownika
+        num_freq = [0,0,0,0,0,0]
+        g_freq = [0,0,0,0,0,0]
+        for x in range(len(g_num)):
+            if g_num[x] == self.num[x]:
+                hits += 1
+            else:
+                cur_num = self.num[x]
+                num_freq[cur_num - 1] += 1
+                cur_num = g_num[x]
+                g_freq[cur_num - 1] += 1
+        for x in range(len(num_freq)):
+            while num_freq[x] > 0:
+                if g_freq[x] > 0:
+                    places += 1
+                    g_freq[x] -= 1
+                num_freq[x] -= 1
+        return hits, places
+    
 class OszukaneReguly(RegulyGry):
     def peek(self):
         """Pokaż informację o oszustwie"""
@@ -183,12 +186,15 @@ class OszukaneReguly(RegulyGry):
 if __name__ == '__main__':
     cheat = random.choice([0, 1])
     if cheat == 0:
-        reguly = RegulyGry()
+        reguly = LogikaGry()
     else:
         reguly = OszukaneReguly()
 
     def reset():
         reguly.reset()
+        label.config(text = "Pozostało prób: 12")
+        hints_1.config(text = "Pełne trafienia: 0")
+        hints_2.config(text = "Poprawne liczby na złych miejscach: 0")
     
     def peek():
         reguly.attempts_left = 0
@@ -208,23 +214,23 @@ if __name__ == '__main__':
     
     root = Tk()
     root.title('App')
-    root.geometry("600x400")
+    root.geometry("220x220")
     label = Label(root, text="Mastermind", font=30, fg="blue")
     label.pack()
     reset_button = Button(root, text="RESET", width=8, command=reset)
     reset_button.pack()
     text_box = Text(root, height=1, width=12)
     text_box.pack()
+    send_button = Button(root, text="Zatwierdź", width=12, command = lambda:getInput())
+    send_button.pack()
     label = Label(root, text = "Pozostało prób: 12")
     label.pack()
-    send_button = Button(root, text="Confirm guess", width=14, command = lambda:getInput())
-    send_button.pack()
-    peek_button = Button(root, text="Give up and reveal the code", width=20, command=peek)
-    peek_button.pack()
     hints_1 = Label(root, text="Pełne trafienia: 0")
     hints_1.pack()
     hints_2 = Label(root, text="Poprawne liczby na złych miejscach: 0")
     hints_2.pack()
     oszust_button = Button(root, text="Oszust!", width=8, command=oszust)
     oszust_button.pack()
+    peek_button = Button(root, text="Poddaj się", width=8, command=peek)
+    peek_button.pack()
     root.mainloop()
