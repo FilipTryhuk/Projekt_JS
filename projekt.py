@@ -31,6 +31,7 @@ class RegulyGry():
         self._n2 = 2
         self._n3 = 3
         self._n4 = 4
+        self.num = [self._n1, self._n2, self._n3, self._n4]
         
     def nextAttempt(self):
         """Pobierz kolejną odpowiedź od użytkownika, prześlij ją do oceny"""
