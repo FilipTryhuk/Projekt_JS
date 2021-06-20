@@ -3,26 +3,68 @@ from projekt import *
 
 class Test(unittest.TestCase):
     
-    
-    def test_(self):
+    def test_incorrentGuess(self):
         reguly = RegulyGry()
         reguly.changeSol()
-        hits, places = reguly.evaluateAnswer(self, 1411)
-        self.assertEqual(hits, 1)
-        self.assertEqual(places, 1)
+        hits, places = reguly.evaluateAnswer([5, 6, 5, 6])
+        self.assertEqual(hits, 0)
+        self.assertEqual(places, 0)
 
+    def test_correctNumbersWrongPlaces(self):
+        reguly = RegulyGry()
+        reguly.changeSol()
+        hits, places = reguly.evaluateAnswer([4, 3, 2, 1])
+        self.assertEqual(hits, 0)
+        self.assertEqual(places, 4)
         
-    def test_isupper(self):
-        self.assertTrue('FOO'.isupper())
-        self.assertFalse('Foo'.isupper())
-
-    def test_split(self):
-        s = 'hello world'
-        self.assertEqual(s.split(), ['hello', 'world'])
-        # check that s.split fails when the separator is not a string
-        with self.assertRaises(TypeError):
-            s.split(2)
+    def test_twoCorrectTwoInWrongPlaces(self):
+        reguly = RegulyGry()
+        reguly.changeSol()
+        hits, places = reguly.evaluateAnswer([1, 2, 4, 3])
+        self.assertEqual(hits, 2)
+        self.assertEqual(places, 2)        
         
-
+    def test_showCorrectAnswerThenGuessCorrectly(self):
+        reguly = RegulyGry()
+        res =  reguly.peek()
+        res = res.split(" ", 2)
+        ans = [res[2][1], res[2][4], res[2][7], res[2][10]]
+        hits, places = reguly.evaluateAnswer(ans)
+        self.assertEqual(hits, 4)
+        self.assertEqual(places, 0)
+        
+    def test_noAttempsLeft(self):
+        reguly = RegulyGry()
+        reguly.changeSol() 
+        for i in range(12):
+            ans, hits, places = reguly.sendInput(str(5555))
+        self.assertEqual(ans, "Przegrana")
+    
+    def test_incorrectFormat(self):
+        reguly = RegulyGry()
+        reguly.sendInput(str(123456))
+        self.assertEqual(reguly.attempts_left, 12)
+        
+    def test_oszustWhenRegulyCorrect(self):
+        reguly = RegulyGry()
+        ann, mode = reguly.oszust()
+        self.assertEqual(ann[:10], "Tere fere.")
+    
+    def test_oszustWhenRegulyIncorrect(self):
+        reguly = OszukaneReguly()
+        ann, mode = reguly.oszust()
+        self.assertEqual(ann[:18], "Złapałeś/łaś mnie!")
+    
+    def test_restGameContinuePlaying(self):
+        reguly = RegulyGry()
+        reguly.changeSol()
+        for i in range(10):
+            reguly.sendInput(str(5555))
+        reguly.reset()
+        reguly.changeSol()
+        for i in range(5):
+            reguly.sendInput(str(5555))
+        self.assertEqual(reguly.attempts_left, 7)
+        
 if __name__ == '__main__':
     unittest.main()
