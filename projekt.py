@@ -4,9 +4,6 @@ from tkinter import *
 class MyError(Exception):
     pass
 
-class UnknownError(MyError):
-    pass
-
 class IncorrectData(MyError):
     pass
 
@@ -112,8 +109,13 @@ class LogikaGry(RegulyGry):
         """Porównaj podaną odpowiedź, zwróc trafienia pełne i częściowe"""
         hits = 0
         places = 0
-        g1, g2, g3, g4 = [int(x) for x in guess]
-        g_num = [g1, g2, g3, g4]
+        try:
+            g1, g2, g3, g4 = [int(x) for x in guess]
+            g_num = [g1, g2, g3, g4]
+            if len(g_num) < 4:
+                raise IncorrectData
+        except (IncorrectData):
+            print("Błąd we wczytywaniu informacji!")
         #num_freq - tablica przechowujaca informacje o ilosci kazdej z cyfr 1-6 w nietrafionym kodzie
         #g_freq - tablica przechowujaca informacje o ilosci kazdej z cyfr 1-6 w nietrafionej odpowiedzi uzytkownika
         num_freq = [0,0,0,0,0,0]
@@ -148,8 +150,13 @@ class OszukaneReguly(RegulyGry):
         """Porównaj podaną odpowiedź, zwróc niepoprawne trafienia pełne i częściowe"""
         true_hits = 0
         true_places = 0
-        g1, g2, g3, g4 = [int(x) for x in guess]
-        g_num = [g1, g2, g3, g4]
+        try:
+            g1, g2, g3, g4 = [int(x) for x in guess]
+            g_num = [g1, g2, g3, g4]
+            if len(g_num) < 4:
+                raise IncorrectData
+        except (IncorrectData):
+            print("Błąd we wczytywaniu informacji!")
         #find the correct answers
         num_freq = [0,0,0,0,0,0]
         g_freq = [0,0,0,0,0,0]
